@@ -51,9 +51,9 @@ namespace Restaurante
                     options.Lockout.AllowedForNewUsers = true;
                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
                     options.Lockout.MaxFailedAccessAttempts = 8;
-            
+
                     //user
-                    //options.User.RequireUniqueEmail=
+                    options.User.RequireUniqueEmail = true;
                 }
                 );
 
@@ -69,7 +69,11 @@ namespace Restaurante
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app, IWebHostEnvironment env,
+            RestauranteDbContext  bd, UserManager<IdentityUser> userManager
+            
+            )
         {
             if (env.IsDevelopment())
             {
@@ -97,6 +101,24 @@ namespace Restaurante
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+
+
+            //adicionar utilizadores 
+            if (env.IsDevelopment())
+            {
+                SeedData.Populate(bd);
+                SeedData.PopulateUsers(userManager).Wait();
+            }
+            else {
+            //Criar admin
+
+
+            }
         }
+
     }
+
+
+    
 }
